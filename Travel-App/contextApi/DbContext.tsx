@@ -16,6 +16,7 @@ export interface IDbContext {
   data: IDiscoveryItem[];
   loading: boolean;
   reloadData: () => void;
+  initLoading: boolean;
 }
 
 const MOCKDATA = [
@@ -265,11 +266,13 @@ export const DbContext = React.createContext<IDbContext>({
   data: [],
   loading: false,
   reloadData: () => {},
+  initLoading: false,
 });
 
 export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
   const [data, setData] = useState<IDiscoveryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [initLoading, setInitLoading] = useState<boolean>(true);
   const [trigger, setTrigger] = useState<boolean>(false);
 
   const handleReload = () => {
@@ -290,6 +293,7 @@ export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
       } finally {
         if (!ignore) {
           setLoading(false);
+          setInitLoading(false);
         }
       }
     };
@@ -302,7 +306,12 @@ export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
 
   return (
     <DbContext.Provider
-      value={{data: data, loading: loading, reloadData: handleReload}}
+      value={{
+        data: data,
+        loading: loading,
+        reloadData: handleReload,
+        initLoading: initLoading,
+      }}
     >
       {children}
     </DbContext.Provider>

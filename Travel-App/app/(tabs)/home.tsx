@@ -1,4 +1,4 @@
-import DiscoveryCard from "@/components/DiscoveryItem/DiscoveryCard";
+import DiscoveryCard from "@/components/DiscoveryCard/DiscoveryCard";
 import {AsyncStorageContext} from "@/contextApi/AsyncStorageContex";
 import {DbContext} from "@/contextApi/DbContext";
 import {Colors} from "@/constants/Colors";
@@ -18,7 +18,7 @@ import {useSafeAreaInsets} from "react-native-safe-area-context";
 const Home = () => {
   const insets = useSafeAreaInsets();
   const {name, handleLogout} = useContext(AsyncStorageContext);
-  const {data, loading} = useContext(DbContext);
+  const {data, loading, reloadData, initLoading} = useContext(DbContext);
 
   return (
     <View
@@ -34,7 +34,7 @@ const Home = () => {
         </Pressable>
       </View>
 
-      {loading ? (
+      {initLoading ? (
         <ActivityIndicator
           size="large"
           color={Colors.primary}
@@ -45,8 +45,9 @@ const Home = () => {
           data={data}
           renderItem={({item}) => <DiscoveryCard data={item} />}
           keyExtractor={(item) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.list}
+          onRefresh={reloadData}
+          refreshing={loading}
         />
       )}
     </View>

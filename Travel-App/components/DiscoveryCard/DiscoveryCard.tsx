@@ -1,4 +1,4 @@
-import {Text, View, StyleSheet, Image, Pressable, Alert} from "react-native";
+import {Text, View, StyleSheet, Image, Pressable} from "react-native";
 import {IDiscoveryItem as IDiscoveryCard} from "@/contextApi/DbContext";
 import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
