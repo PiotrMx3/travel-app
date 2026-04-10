@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {router} from "expo-router";
 import React from "react";
 import {useEffect, useState} from "react";
 import {Alert} from "react-native";
@@ -7,12 +8,14 @@ export interface IAsyncStorageContext {
   name: string;
   loading: boolean;
   handleName: (name: string) => void;
+  handleLogout: () => void;
 }
 
 export const AsyncStorageContext = React.createContext<IAsyncStorageContext>({
   name: "",
   loading: false,
-  handleName: async () => {},
+  handleName: () => {},
+  handleLogout: () => {},
 });
 
 export const AsyncStorageProvider = ({
@@ -65,12 +68,19 @@ export const AsyncStorageProvider = ({
     setName(name);
   };
 
+  const hadnleLogout = async () => {
+    await AsyncStorage.removeItem("userName");
+    setName("");
+    router.replace("/");
+  };
+
   return (
     <AsyncStorageContext.Provider
       value={{
         name: name,
         loading: loading,
         handleName: handleName,
+        handleLogout: hadnleLogout,
       }}
     >
       {children}

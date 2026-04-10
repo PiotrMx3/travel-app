@@ -1,44 +1,83 @@
-import {FontAwesome} from "@expo/vector-icons";
-import {Tabs} from "expo-router";
-import {Text} from "react-native";
+import DiscoveryCard from "@/components/DiscoveryItem/DiscoveryCard";
+import {AsyncStorageContext} from "@/contextApi/AsyncStorageContex";
+import {DbContext} from "@/contextApi/DbContext";
+import {Colors} from "@/constants/Colors";
+import {FontSize, FontWeight} from "@/constants/Typography";
+import {Spacing} from "@/constants/Spacing";
+import {useContext} from "react";
+import {
+  Text,
+  View,
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Pressable,
+} from "react-native";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 const Home = () => {
+  const insets = useSafeAreaInsets();
+  const {name, handleLogout} = useContext(AsyncStorageContext);
+  const {data, loading} = useContext(DbContext);
+
   return (
-    <>
-      <Tabs.Screen
-        options={{
-          // Tytuł w tab barze i headerze
-          title: "Home",
+    <View
+      style={[
+        styles.container,
+        {paddingTop: insets.top, paddingBottom: insets.bottom},
+      ]}
+    >
+      <View style={styles.header}>
+        <Pressable onPress={handleLogout}>
+          <Text style={styles.greeting}>Hallo, {name} 👋</Text>
+          <Text style={styles.subtitle}>Discover your next destination</Text>
+        </Pressable>
+      </View>
 
-          // Ikona w tab barze
-          tabBarIcon: ({color, size, focused}) => (
-            <FontAwesome name="home" size={size} color={color} />
-          ),
-
-          // Ukryj z tab bara (ale route nadal działa)
-          href: null,
-
-          // Pokaż/ukryj header nad ekranem
-          headerShown: true,
-
-          // Odznaka z liczbą (np. powiadomienia)
-          tabBarBadge: 3,
-
-          // Kolor aktywnej zakładki
-          tabBarActiveTintColor: "blue",
-
-          // Kolor nieaktywnej zakładkir
-          tabBarInactiveTintColor: "gray",
-
-          // Tło tab bara
-          tabBarStyle: {
-            backgroundColor: "white",
-          },
-        }}
-      />
-      <Text>Tabs Index</Text>
-    </>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color={Colors.primary}
+          style={styles.loader}
+        />
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={({item}) => <DiscoveryCard data={item} />}
+          keyExtractor={(item) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.list}
+        />
+      )}
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  header: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
+  },
+  greeting: {
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.bold,
+    color: Colors.text,
+  },
+  subtitle: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+    marginTop: Spacing.xs,
+  },
+  loader: {
+    flex: 1,
+  },
+  list: {
+    paddingBottom: Spacing.lg,
+  },
+});
 
 export default Home;

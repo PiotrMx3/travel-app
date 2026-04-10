@@ -7,7 +7,7 @@ const Index = () => {
   const {name} = useContext(AsyncStorageContext);
 
   if (name !== "" && name !== null) {
-    return <Redirect href="/(tabs)/home" />;
+    return <Redirect href="/(tabs)/Home" />;
   }
 
   return <Onboarding />;

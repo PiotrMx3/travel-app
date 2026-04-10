@@ -1,10 +1,14 @@
-import {Tabs} from "expo-router";
-import {Text} from "react-native";
+import {Text, View} from "react-native";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 const Favorites = () => {
+  const insets = useSafeAreaInsets();
+
   return (
     <>
-      <Text>Favorites</Text>
+      <View style={[{paddingTop: insets.top, paddingBottom: insets.bottom}]}>
+        <Text>Favorites</Text>
+      </View>
     </>
   );
 };
