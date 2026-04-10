@@ -1,11 +1,14 @@
-import {AsyncStorageProvider} from "@/hooks/AsyncStorageContex";
+import {AsyncStorageProvider} from "@/contextApi/AsyncStorageContex";
 import {Stack} from "expo-router";
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 const RootLayout = () => {
   return (
-    <AsyncStorageProvider>
-      <Stack screenOptions={{headerShown: false}} />
-    </AsyncStorageProvider>
+    <SafeAreaProvider>
+      <AsyncStorageProvider>
+        <Stack screenOptions={{headerShown: false}} />
+      </AsyncStorageProvider>
+    </SafeAreaProvider>
   );
 };
 

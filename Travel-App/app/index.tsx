@@ -1,8 +1,7 @@
 import Onboarding from "@/components/Onboarding/Onboarding";
-import {AsyncStorageContext} from "@/hooks/AsyncStorageContex";
+import {AsyncStorageContext} from "@/contextApi/AsyncStorageContex";
 import {Redirect} from "expo-router";
 import {useContext} from "react";
-import {View} from "react-native";
 
 const Index = () => {
   const {name} = useContext(AsyncStorageContext);
@@ -11,11 +10,7 @@ const Index = () => {
     return <Redirect href="/(tabs)/home" />;
   }
 
-  return (
-    <View style={{}}>
-      <Onboarding />
-    </View>
-  );
+  return <Onboarding />;
 };
 
 export default Index;

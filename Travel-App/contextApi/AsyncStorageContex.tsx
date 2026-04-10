@@ -1,18 +1,17 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import {useEffect, useState} from "react";
+import {Alert} from "react-native";
 
 export interface IAsyncStorageContext {
   name: string;
   loading: boolean;
-  error: string;
   handleName: (name: string) => void;
 }
 
 export const AsyncStorageContext = React.createContext<IAsyncStorageContext>({
   name: "",
   loading: false,
-  error: "",
   handleName: async () => {},
 });
 
@@ -23,7 +22,6 @@ export const AsyncStorageProvider = ({
 }) => {
   const [name, setName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     let ignore = false;
@@ -60,10 +58,8 @@ export const AsyncStorageProvider = ({
   }, [name]);
 
   const handleName = (name: string) => {
-    setError("");
-
     if (name === "" || name === null) {
-      setError("Name Cant be empty");
+      Alert.alert("Name can not be empty");
       return;
     }
     setName(name);
@@ -74,7 +70,6 @@ export const AsyncStorageProvider = ({
       value={{
         name: name,
         loading: loading,
-        error: error,
         handleName: handleName,
       }}
     >
