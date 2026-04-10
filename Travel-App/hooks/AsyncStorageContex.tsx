@@ -1,4 +1,4 @@
-import {createAsyncStorage} from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import {useEffect, useState} from "react";
 
@@ -25,14 +25,12 @@ export const AsyncStorageProvider = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  const storage = createAsyncStorage("appDB");
-
   useEffect(() => {
     let ignore = false;
     async function laodFromStorage() {
       setLoading(true);
       try {
-        const userName = (await storage.getItem("userName")) ?? "";
+        const userName = (await AsyncStorage.getItem("userName")) ?? "";
 
         if (!ignore) {
           setName(userName);
@@ -56,7 +54,7 @@ export const AsyncStorageProvider = ({
   useEffect(() => {
     if (name === "") return;
     async function setStorage() {
-      await storage.setItem("userName", name);
+      await AsyncStorage.setItem("userName", name);
     }
     setStorage();
   }, [name]);

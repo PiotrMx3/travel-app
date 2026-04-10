@@ -1,11 +1,13 @@
 import Onboarding from "@/components/Onboarding/Onboarding";
+import {AsyncStorageContext} from "@/hooks/AsyncStorageContex";
 import {Redirect} from "expo-router";
+import {useContext} from "react";
 import {View} from "react-native";
 
 const Index = () => {
-  const redirect = "y";
+  const {name} = useContext(AsyncStorageContext);
 
-  if (redirect === "y") {
+  if (name !== "" && name !== null) {
     return <Redirect href="/(tabs)/home" />;
   }
 

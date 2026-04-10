@@ -4,7 +4,7 @@ import {Stack} from "expo-router";
 const RootLayout = () => {
   return (
     <AsyncStorageProvider>
-      <Stack screenOptions={{headerShown: false}} />;
+      <Stack screenOptions={{headerShown: false}} />
     </AsyncStorageProvider>
   );
 };
