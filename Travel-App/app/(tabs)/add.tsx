@@ -6,21 +6,13 @@ import {
   Pressable,
   StyleSheet,
 } from "react-native";
-import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {Spacing, BorderRadius} from "@/constants/Spacing";
 
 const Add = () => {
-  const insets = useSafeAreaInsets();
-
   return (
-    <View
-      style={[
-        styles.container,
-        {paddingTop: insets.top, paddingBottom: insets.bottom},
-      ]}
-    >
+    <View style={styles.container}>
       <Image
         source={require("../../assets/images/600x400.png")}
         style={styles.image}

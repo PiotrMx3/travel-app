@@ -13,19 +13,14 @@ import {
   StyleSheet,
   Pressable,
 } from "react-native";
-import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 const Home = () => {
-  const insets = useSafeAreaInsets();
   const {name, handleLogout} = useContext(AsyncStorageContext);
   const {data, loading, reloadData, initLoading} = useContext(DbContext);
 
   return (
     <View
-      style={[
-        styles.container,
-        {paddingTop: insets.top, paddingBottom: insets.bottom},
-      ]}
+      style={styles.container}
     >
       <View style={styles.header}>
         <Pressable onPress={handleLogout}>
