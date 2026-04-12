@@ -1,5 +1,5 @@
 import {AsyncStorageProvider} from "@/contextApi/AsyncStorageContex";
-import {Redirect, Stack} from "expo-router";
+import {Stack} from "expo-router";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 
 const RootLayout = () => {
