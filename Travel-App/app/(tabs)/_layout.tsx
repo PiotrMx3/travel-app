@@ -1,8 +1,11 @@
-import {Tabs} from "expo-router";
+import {Redirect, Tabs} from "expo-router";
 import {FontAwesome} from "@expo/vector-icons";
 import {DbContextProvider} from "@/contextApi/DbContext";
 import {Colors} from "@/constants/Colors";
 import {FontSize} from "@/constants/Typography";
+import {useContext} from "react";
+import {AsyncStorageContext} from "@/contextApi/AsyncStorageContex";
+import {ActivityIndicator} from "react-native";
 
 const tabBarStyle = {
   backgroundColor: Colors.surface,
@@ -12,6 +15,22 @@ const tabBarStyle = {
 };
 
 const TabsLayout = () => {
+  const {name, loading} = useContext(AsyncStorageContext);
+
+  if (loading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color={Colors.primary}
+        style={{flex: 1}}
+      />
+    );
+  }
+
+  if (!name) {
+    return <Redirect href="/" />;
+  }
+
   return (
     <DbContextProvider>
       <Tabs
