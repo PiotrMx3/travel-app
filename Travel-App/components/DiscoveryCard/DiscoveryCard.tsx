@@ -8,7 +8,6 @@ import {router} from "expo-router";
 const DiscoveryCard = ({data}: {data: IDiscoveryCard}) => {
   return (
     <View style={styles.card}>
-      {/* <Pressable onPress={() => Alert.alert(`/details/${data.id}`)}> */}
       <Pressable onPress={() => router.push(`/details/${data.id}`)}>
         <Image
           source={{uri: data.image}}
