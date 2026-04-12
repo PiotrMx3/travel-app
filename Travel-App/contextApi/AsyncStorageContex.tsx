@@ -68,7 +68,7 @@ export const AsyncStorageProvider = ({
     setName(name);
   };
 
-  const hadnleLogout = async () => {
+  const handleLogout = async () => {
     await AsyncStorage.removeItem("userName");
     setName("");
     router.replace("/");
@@ -80,7 +80,7 @@ export const AsyncStorageProvider = ({
         name: name,
         loading: loading,
         handleName: handleName,
-        handleLogout: hadnleLogout,
+        handleLogout: handleLogout,
       }}
     >
       {children}
