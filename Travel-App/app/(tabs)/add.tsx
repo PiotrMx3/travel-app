@@ -9,14 +9,20 @@ import {
 import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {Spacing, BorderRadius} from "@/constants/Spacing";
+import useImagepicker from "@/hooks/useImagepicker";
 
 const Add = () => {
+  const {imageUri, handleImage} = useImagepicker();
+
+  const imageSource = imageUri
+    ? {uri: imageUri}
+    : require("../../assets/images/600x400.png");
+
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../../assets/images/600x400.png")}
-        style={styles.image}
-      />
+      <Pressable onPress={handleImage}>
+        <Image source={imageSource} style={styles.image} />
+      </Pressable>
 
       <View style={styles.form}>
         <Text style={styles.title}>Add Discovery</Text>
