@@ -6,6 +6,10 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+# User defined
+issues.md
+STYLING.md
+
 # Claude AI conversation files
 CLAUDE.md
 CLAUDE_*.md
