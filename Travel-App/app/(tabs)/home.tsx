@@ -15,13 +15,12 @@ import {
 } from "react-native";
 
 const Home = () => {
-  const {name, handleLogout} = useContext(AsyncStorageContext);
+  //TODO: User.Id From context is needed to save favs.
+  const {name, user, handleLogout} = useContext(AsyncStorageContext);
   const {data, loading, reloadData, initLoading} = useContext(DbContext);
 
   return (
-    <View
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={handleLogout}>
           <Text style={styles.greeting}>Hallo, {name} 👋</Text>

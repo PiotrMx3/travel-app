@@ -1,4 +1,6 @@
-import React, {useEffect, useState} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, {useContext, useEffect, useState} from "react";
+import {AsyncStorageContext} from "./AsyncStorageContex";
 
 export interface IDiscoveryItem {
   id: number;
@@ -274,6 +276,8 @@ export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [initLoading, setInitLoading] = useState<boolean>(true);
   const [trigger, setTrigger] = useState<boolean>(false);
+  //TODO: user.Id needed to return users rows from db
+  const {user} = useContext(AsyncStorageContext);
 
   const handleReload = () => {
     setTrigger((prev) => !prev);

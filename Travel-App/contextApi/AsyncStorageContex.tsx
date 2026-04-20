@@ -1,11 +1,21 @@
+import upsertUser from "@/database/upsertUser";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {router} from "expo-router";
 import React from "react";
 import {useEffect, useState} from "react";
 import {Alert} from "react-native";
 
+interface IUserData {
+  user: {
+    created_at: string | null;
+    id: string;
+    username: string;
+  } | null;
+}
+
 export interface IAsyncStorageContext {
   name: string;
+  user: IUserData;
   loading: boolean;
   handleName: (name: string) => void;
   handleLogout: () => void;
@@ -13,6 +23,7 @@ export interface IAsyncStorageContext {
 
 export const AsyncStorageContext = React.createContext<IAsyncStorageContext>({
   name: "",
+  user: {user: null},
   loading: false,
   handleName: () => {},
   handleLogout: () => {},
@@ -24,6 +35,7 @@ export const AsyncStorageProvider = ({
   children: React.ReactNode;
 }) => {
   const [name, setName] = useState<string>("");
+  const [user, setUser] = useState<IUserData>({user: null});
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -32,9 +44,13 @@ export const AsyncStorageProvider = ({
       setLoading(true);
       try {
         const userName = (await AsyncStorage.getItem("userName")) ?? "";
+        const userFromStorage = (await AsyncStorage.getItem("user")) ?? "";
 
         if (!ignore) {
           setName(userName);
+          if (userFromStorage !== "") {
+            setUser(JSON.parse(userFromStorage));
+          }
         }
       } catch (error) {
         if (error instanceof Error) console.error(error.message);
@@ -54,10 +70,22 @@ export const AsyncStorageProvider = ({
 
   useEffect(() => {
     if (name === "") return;
-    async function setStorage() {
-      await AsyncStorage.setItem("userName", name);
+
+    async function saveUserToDb() {
+      const {data, error} = await upsertUser(name);
+      if (error) {
+        console.error(error);
+        handleLogout();
+        return;
+      }
+
+      if (data !== null) {
+        setUser({user: data[0]});
+        await AsyncStorage.setItem("user", JSON.stringify(data[0]));
+        await AsyncStorage.setItem("userName", name);
+      }
     }
-    setStorage();
+    saveUserToDb();
   }, [name]);
 
   const handleName = (name: string) => {
@@ -70,7 +98,10 @@ export const AsyncStorageProvider = ({
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userName");
+    await AsyncStorage.removeItem("user");
+
     setName("");
+    setUser({user: null});
     router.replace("/");
   };
 
@@ -78,6 +109,7 @@ export const AsyncStorageProvider = ({
     <AsyncStorageContext.Provider
       value={{
         name: name,
+        user: user,
         loading: loading,
         handleName: handleName,
         handleLogout: handleLogout,

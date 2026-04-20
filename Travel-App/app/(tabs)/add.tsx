@@ -5,18 +5,59 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {Spacing, BorderRadius} from "@/constants/Spacing";
 import useImagepicker from "@/hooks/useImagepicker";
+import Entypo from "@expo/vector-icons/Entypo";
+import useSaveDiscovery from "@/hooks/useSaveDiscovery";
+import {useContext, useEffect, useState} from "react";
+import {AsyncStorageContext} from "@/contextApi/AsyncStorageContex";
+import {router} from "expo-router";
+
+//TODO: Button inactive when form is not done
 
 const Add = () => {
-  const {imageUri, handleImage} = useImagepicker();
+  const {imageUri, imageBase64, mimeType, handleImage} = useImagepicker();
+  const {loading, error, success, handleSave} = useSaveDiscovery();
+  const {user} = useContext(AsyncStorageContext);
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+
+  const latitude = 51.260197;
+  const longitude = 4.402771;
 
   const imageSource = imageUri
     ? {uri: imageUri}
     : require("../../assets/images/600x400.png");
+
+  const save = () => {
+    handleSave({
+      username: user.user!.username,
+      title: title,
+      description: description,
+      location_name: "Antwerpen",
+      latitude: latitude,
+      longitude: longitude,
+      imageUri: imageUri ?? "",
+      imageBase64: imageBase64 ?? "",
+      mimeType: mimeType ?? "",
+    });
+  };
+
+  useEffect(() => {
+    // Both False at start
+    if (success) {
+      Alert.alert("Discovery has been sucessed add!");
+      router.push("/Home");
+    } else if (error) {
+      Alert.alert("Something went wrong try again!");
+      router.push("/Home");
+    }
+  }, [success, error]);
 
   return (
     <View style={styles.container}>
@@ -29,26 +70,40 @@ const Add = () => {
         <Text style={styles.subtitle}>Share your next destination</Text>
 
         <TextInput
+          onChangeText={(text) => setTitle(text)}
+          value={title}
           style={styles.input}
           placeholder="Discovery Title"
           placeholderTextColor={Colors.textSecondary}
         />
         <TextInput
+          onChangeText={(text) => setDescription(text)}
+          value={description}
           style={[styles.input, styles.inputMultiline]}
           placeholder="Discovery Description"
           placeholderTextColor={Colors.textSecondary}
           multiline
         />
 
-        <Pressable
-          style={({pressed}) => [
-            styles.button,
-            pressed && styles.buttonPressed,
-          ]}
-          onPress={() => alert("pressed")}
-        >
-          <Text style={styles.buttonText}>Save Discovery</Text>
-        </Pressable>
+        <Entypo name="location-pin" size={28} color="black" />
+        <Text>Load Location...</Text>
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color={Colors.primary}
+            style={styles.loader}
+          />
+        ) : (
+          <Pressable
+            style={({pressed}) => [
+              styles.button,
+              pressed && styles.buttonPressed,
+            ]}
+            onPress={save}
+          >
+            <Text style={styles.buttonText}>Save Discovery</Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -111,6 +166,9 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
+  },
+  loader: {
+    flex: 1,
   },
 });
 
