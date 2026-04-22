@@ -7,12 +7,19 @@ interface IImagePicker {
   imageBase64: string | null;
   mimeType: string | null;
   handleImage: () => void;
+  handleReset: () => void;
 }
 
 const useImagepicker = (): IImagePicker => {
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [uri, setUri] = useState<string | null>(null);
   const [mimeType, setMimeType] = useState<string | null>(null);
+
+  const resetData = () => {
+    setImageBase64(null);
+    setUri(null);
+    setMimeType(null);
+  };
 
   const pickImageAsync = async () => {
     const permissionResult =
@@ -50,6 +57,7 @@ const useImagepicker = (): IImagePicker => {
     imageBase64: imageBase64,
     mimeType: mimeType,
     handleImage: pickImageAsync,
+    handleReset: resetData,
   };
 };
 
