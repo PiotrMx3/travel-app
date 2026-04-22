@@ -16,8 +16,9 @@ import Entypo from "@expo/vector-icons/Entypo";
 import useSaveDiscovery from "@/hooks/useSaveDiscovery";
 import {useContext, useEffect, useState} from "react";
 import {AsyncStorageContext} from "@/contextApi/AsyncStorageContex";
-import {router} from "expo-router";
+import {router, useFocusEffect} from "expo-router";
 import useLocation from "@/hooks/useLocation";
+import React from "react";
 
 //TODO: Button inactive when form is not done
 
@@ -25,13 +26,13 @@ const Add = () => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
-  const {imageUri, imageBase64, mimeType, handleImage} = useImagepicker();
+  const {imageUri, imageBase64, mimeType, handleImage, handleReset} =
+    useImagepicker();
   const {loading, error, success, handleSave} = useSaveDiscovery();
   const {user} = useContext(AsyncStorageContext);
   const {
     location,
     handleLocation,
-    error: errorLocation,
     loading: loadingLocation,
     locationName,
   } = useLocation();
@@ -54,13 +55,28 @@ const Add = () => {
     });
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("focus");
+      return () => {
+        console.log("focus gone");
+      };
+    }, []),
+  );
+
   useEffect(() => {
     // Both False at start
     if (success) {
       Alert.alert("Discovery has been sucessed add!");
+      setTitle("");
+      setDescription("");
+      handleReset();
       router.push("/Home");
     } else if (error) {
       Alert.alert("Something went wrong try again!");
+      setTitle("");
+      setDescription("");
+      handleReset();
       router.push("/Home");
     }
   }, [success, error]);
