@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {useContext, useEffect, useState} from "react";
 import {AsyncStorageContext} from "./AsyncStorageContex";
 
