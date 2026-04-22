@@ -43,12 +43,14 @@ const useSaveDiscovery = (): IUseSaveDiscovery => {
   }: IHandleSave) => {
     try {
       setLoading(true);
+      setError("");
       setSuccess(false);
 
       const upload = await uploadImage(mimeType, imageUri, imageBase64);
       if (upload.error) throw new Error("Upload went wrong!");
 
       const image_url = upload.data?.publicPath || "";
+
       const saveToDb = await saveDiscovery({
         username,
         title,

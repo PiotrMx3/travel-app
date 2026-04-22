@@ -51,7 +51,7 @@ const Add = () => {
   useEffect(() => {
     // Both False at start
     if (success) {
-      Alert.alert("Discovery has been sucessed add!");
+      Alert.alert("Discovery has been sucessed add !");
       router.push("/Home");
     } else if (error) {
       Alert.alert("Something went wrong try again!");
