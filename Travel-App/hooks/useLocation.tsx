@@ -1,10 +1,10 @@
 import {useState} from "react";
 import * as Location from "expo-location";
+import {Alert} from "react-native";
 
 interface IUseLocation {
   location: Location.LocationObject | null;
   handleLocation: () => void;
-  error: string | null;
   loading: boolean;
   locationName: string | null;
 }
@@ -13,7 +13,6 @@ const useLocation = (): IUseLocation => {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [locationName, setLocationName] = useState<string | null>(null);
 
@@ -23,7 +22,10 @@ const useLocation = (): IUseLocation => {
       let {status} = await Location.requestForegroundPermissionsAsync();
 
       if (status !== "granted") {
-        setError("Permission to access location was denied");
+        Alert.alert(
+          "Access denied",
+          "Permission to access location was denied",
+        );
         return;
       }
       await new Promise((r) => setTimeout(r, 2000));
@@ -32,6 +34,7 @@ const useLocation = (): IUseLocation => {
       let deatilsLocation = await Location.reverseGeocodeAsync(location.coords);
       setLocation(location);
       setLocationName(deatilsLocation[0].city);
+      console.log(deatilsLocation);
     } catch (error) {
       console.error(error);
     } finally {
@@ -42,7 +45,6 @@ const useLocation = (): IUseLocation => {
   return {
     location: location,
     handleLocation: getCurrentLocation,
-    error: error,
     loading: loading,
     locationName: locationName,
   };
