@@ -4,16 +4,18 @@ import * as Location from "expo-location";
 interface IUseLocation {
   location: Location.LocationObject | null;
   handleLocation: () => void;
-  errorMsg: string | null;
+  error: string | null;
   loading: boolean;
+  locationName: string | null;
 }
 
 const useLocation = (): IUseLocation => {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [locationName, setLocationName] = useState<string | null>(null);
 
   async function getCurrentLocation() {
     setLoading(true);
@@ -21,12 +23,15 @@ const useLocation = (): IUseLocation => {
       let {status} = await Location.requestForegroundPermissionsAsync();
 
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
+        setError("Permission to access location was denied");
         return;
       }
+      await new Promise((r) => setTimeout(r, 2000));
 
       let location = await Location.getCurrentPositionAsync({});
+      let deatilsLocation = await Location.reverseGeocodeAsync(location.coords);
       setLocation(location);
+      setLocationName(deatilsLocation[0].city);
     } catch (error) {
       console.error(error);
     } finally {
@@ -37,8 +42,9 @@ const useLocation = (): IUseLocation => {
   return {
     location: location,
     handleLocation: getCurrentLocation,
-    errorMsg: errorMsg,
+    error: error,
     loading: loading,
+    locationName: locationName,
   };
 };
 

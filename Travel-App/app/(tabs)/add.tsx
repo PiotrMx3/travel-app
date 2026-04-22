@@ -17,18 +17,24 @@ import useSaveDiscovery from "@/hooks/useSaveDiscovery";
 import {useContext, useEffect, useState} from "react";
 import {AsyncStorageContext} from "@/contextApi/AsyncStorageContex";
 import {router} from "expo-router";
+import useLocation from "@/hooks/useLocation";
 
 //TODO: Button inactive when form is not done
 
 const Add = () => {
-  const {imageUri, imageBase64, mimeType, handleImage} = useImagepicker();
-  const {loading, error, success, handleSave} = useSaveDiscovery();
-  const {user} = useContext(AsyncStorageContext);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
-  const latitude = 51.260197;
-  const longitude = 4.402771;
+  const {imageUri, imageBase64, mimeType, handleImage} = useImagepicker();
+  const {loading, error, success, handleSave} = useSaveDiscovery();
+  const {user} = useContext(AsyncStorageContext);
+  const {
+    location,
+    handleLocation,
+    error: errorLocation,
+    loading: loadingLocation,
+    locationName,
+  } = useLocation();
 
   const imageSource = imageUri
     ? {uri: imageUri}
@@ -39,9 +45,9 @@ const Add = () => {
       username: user.user!.username,
       title: title,
       description: description,
-      location_name: "Antwerpen",
-      latitude: latitude,
-      longitude: longitude,
+      location_name: locationName!,
+      latitude: location?.coords.latitude!,
+      longitude: location?.coords.longitude!,
       imageUri: imageUri ?? "",
       imageBase64: imageBase64 ?? "",
       mimeType: mimeType ?? "",
@@ -51,7 +57,7 @@ const Add = () => {
   useEffect(() => {
     // Both False at start
     if (success) {
-      Alert.alert("Discovery has been sucessed add !");
+      Alert.alert("Discovery has been sucessed add!");
       router.push("/Home");
     } else if (error) {
       Alert.alert("Something went wrong try again!");
@@ -85,8 +91,23 @@ const Add = () => {
           multiline
         />
 
-        <Entypo name="location-pin" size={28} color="black" />
-        <Text>Load Location...</Text>
+        <View style={styles.locationRow}>
+          <Entypo name="location-pin" size={40} color={Colors.primary} />
+          <Pressable onPress={handleLocation}>
+            {loadingLocation ? (
+              <ActivityIndicator
+                size="large"
+                color={Colors.primary}
+                style={styles.loader}
+              />
+            ) : location === null ? (
+              <Text style={styles.locationText}>Load location</Text>
+            ) : (
+              <Text style={styles.locationText}>Locatie Saved !</Text>
+            )}
+          </Pressable>
+        </View>
+
         {loading ? (
           <ActivityIndicator
             size="large"
@@ -166,6 +187,16 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
+  },
+  locationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    marginBottom: Spacing.md,
+  },
+  locationText: {
+    fontSize: FontSize.lg,
+    color: Colors.textSecondary,
   },
   loader: {
     flex: 1,

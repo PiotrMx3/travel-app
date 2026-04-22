@@ -38,7 +38,6 @@ const useImagepicker = (): IImagePicker => {
       setImageBase64(result.assets[0].base64!);
       setUri(result.assets[0].uri);
       setMimeType(result.assets[0].mimeType!);
-      console.log(result);
     } else {
       setImageBase64(null);
       setUri(null);
