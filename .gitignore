@@ -10,6 +10,7 @@ lerna-debug.log*
 issues.md
 STYLING.md
 flow-db.md
+.mcp.json
 
 # Claude AI conversation files
 CLAUDE.md
