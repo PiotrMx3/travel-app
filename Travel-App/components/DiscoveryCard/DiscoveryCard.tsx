@@ -4,13 +4,30 @@ import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {BorderRadius, Spacing} from "@/constants/Spacing";
 import {router} from "expo-router";
+import CardWithFavType from "@/database/cardWithFavType";
 
-const DiscoveryCard = ({data}: {data: IDiscoveryCard}) => {
+interface DiscoveryCardProp {
+  created_at: string | null;
+  description: string | null;
+  id: string;
+  image_url: string;
+  latitude: number | null;
+  location_name: string | null;
+  longitude: number | null;
+  title: string;
+  username: string;
+  favourites: {
+    id: string;
+    card_id: string;
+  }[];
+}
+
+const DiscoveryCard = ({data}: {data: DiscoveryCardProp}) => {
   return (
     <View style={styles.card}>
       <Pressable onPress={() => router.push(`/details/${data.id}`)}>
         <Image
-          source={{uri: data.image}}
+          source={{uri: data.image_url}}
           style={styles.image}
           resizeMode="cover"
         />
@@ -20,10 +37,9 @@ const DiscoveryCard = ({data}: {data: IDiscoveryCard}) => {
         <Text style={styles.title}>{data.title}</Text>
 
         <View style={styles.locationBox}>
-          <Text style={styles.city}>{data.location.city}</Text>
-          <Text style={styles.address}>{data.location.address}</Text>
+          <Text style={styles.city}>{data.location_name}</Text>
           <Text style={styles.coordinates}>
-            {data.location.lat.toFixed(4)}, {data.location.lng.toFixed(4)}
+            {data.latitude?.toFixed(4)}, {data.longitude?.toFixed(4)}
           </Text>
         </View>
       </View>
