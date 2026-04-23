@@ -298,7 +298,6 @@ export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
         if (error) throw new Error(error.message);
 
         if (!ignore) {
-          console.log(data);
           setData(data);
         }
       } catch (error) {
