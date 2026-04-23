@@ -9,7 +9,7 @@ import {Alert} from "react-native";
 //   locationName: string | null;
 // }
 
-interface IUseLocation {
+export interface IUseLocation {
   result: {
     location: Location.LocationObject;
     locationName: string;

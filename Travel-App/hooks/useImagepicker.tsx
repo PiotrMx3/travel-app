@@ -2,7 +2,7 @@ import {useState} from "react";
 import {Alert} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
-interface IImagePicker {
+export interface IImagePicker {
   result: {
     imageUri: string;
     imageBase64: string;
