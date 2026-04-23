@@ -2,11 +2,20 @@ import {useState} from "react";
 import * as Location from "expo-location";
 import {Alert} from "react-native";
 
+// interface IUseLocation {
+//   location: Location.LocationObject | null;
+//   handleLocation: () => void;
+//   loading: boolean;
+//   locationName: string | null;
+// }
+
 interface IUseLocation {
-  location: Location.LocationObject | null;
-  handleLocation: () => void;
+  result: {
+    location: Location.LocationObject;
+    locationName: string;
+  } | null;
   loading: boolean;
-  locationName: string | null;
+  handleLocation: () => void;
 }
 
 const useLocation = (): IUseLocation => {
@@ -34,7 +43,6 @@ const useLocation = (): IUseLocation => {
       let deatilsLocation = await Location.reverseGeocodeAsync(location.coords);
       setLocation(location);
       setLocationName(deatilsLocation[0].city);
-      console.log(deatilsLocation);
     } catch (error) {
       console.error(error);
     } finally {
@@ -42,11 +50,17 @@ const useLocation = (): IUseLocation => {
     }
   }
 
+  const validResult = location !== null && locationName !== null;
+
   return {
-    location: location,
+    result: validResult
+      ? {
+          location: location,
+          locationName: locationName,
+        }
+      : null,
     handleLocation: getCurrentLocation,
     loading: loading,
-    locationName: locationName,
   };
 };
 

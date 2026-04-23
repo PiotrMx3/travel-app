@@ -3,9 +3,11 @@ import {Alert} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
 interface IImagePicker {
-  imageUri: string | null;
-  imageBase64: string | null;
-  mimeType: string | null;
+  result: {
+    imageUri: string;
+    imageBase64: string;
+    mimeType: string;
+  } | null;
   handleImage: () => void;
   handleReset: () => void;
 }
@@ -42,9 +44,11 @@ const useImagepicker = (): IImagePicker => {
     });
 
     if (!result.canceled) {
-      setImageBase64(result.assets[0].base64!);
-      setUri(result.assets[0].uri);
-      setMimeType(result.assets[0].mimeType!);
+      if (result.assets[0].base64 && result.assets[0].mimeType) {
+        setImageBase64(result.assets[0].base64);
+        setUri(result.assets[0].uri);
+        setMimeType(result.assets[0].mimeType);
+      }
     } else {
       setImageBase64(null);
       setUri(null);
@@ -52,10 +56,19 @@ const useImagepicker = (): IImagePicker => {
     }
   };
 
+  const validResult =
+    typeof uri === "string" &&
+    typeof imageBase64 === "string" &&
+    typeof mimeType === "string";
+
   return {
-    imageUri: uri,
-    imageBase64: imageBase64,
-    mimeType: mimeType,
+    result: validResult
+      ? {
+          imageUri: uri,
+          imageBase64: imageBase64,
+          mimeType: mimeType,
+        }
+      : null,
     handleImage: pickImageAsync,
     handleReset: resetData,
   };
