@@ -1,5 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {AsyncStorageContext} from "./AsyncStorageContex";
+import {supabase} from "@/database/supabase";
+import CardWithFavType from "@/database/cardWithFavType";
 
 export interface IDiscoveryItem {
   id: number;
@@ -14,7 +16,7 @@ export interface IDiscoveryItem {
 }
 
 export interface IDbContext {
-  data: IDiscoveryItem[];
+  data: CardWithFavType;
   loading: boolean;
   reloadData: () => void;
   initLoading: boolean;
@@ -271,7 +273,7 @@ export const DbContext = React.createContext<IDbContext>({
 });
 
 export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
-  const [data, setData] = useState<IDiscoveryItem[]>([]);
+  const [data, setData] = useState<CardWithFavType>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [initLoading, setInitLoading] = useState<boolean>(true);
   const [trigger, setTrigger] = useState<boolean>(false);
@@ -286,13 +288,22 @@ export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
     let ignore = false;
     const fetchData = async () => {
       setLoading(true);
+      if (user.user === null) return;
       try {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const {data, error} = await supabase
+          .from("cards")
+          .select(`*, favourites (id, card_id)`)
+          .eq(`favourites.username`, user.user.username);
+
+        if (error) throw new Error(error.message);
+
         if (!ignore) {
-          setData(MOCKDATA);
+          console.log(data);
+          setData(data);
         }
       } catch (error) {
-        console.error("Fetching error: ", error);
+        if (error instanceof Error)
+          console.error("Fetching error: ", error.message);
       } finally {
         if (!ignore) {
           setLoading(false);

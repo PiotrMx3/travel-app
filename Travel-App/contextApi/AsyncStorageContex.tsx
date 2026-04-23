@@ -47,8 +47,8 @@ export const AsyncStorageProvider = ({
         const userFromStorage = (await AsyncStorage.getItem("user")) ?? "";
 
         if (!ignore) {
-          setName(userName);
-          if (userFromStorage !== "") {
+          if (userFromStorage !== "" && userName !== "") {
+            setName(userName);
             setUser(JSON.parse(userFromStorage));
           }
         }
@@ -70,22 +70,35 @@ export const AsyncStorageProvider = ({
 
   useEffect(() => {
     if (name === "") return;
-
+    let ignore = false;
     async function saveUserToDb() {
-      const {data, error} = await upsertUser(name);
-      if (error) {
-        console.error(error);
-        handleLogout();
-        return;
-      }
+      setLoading(true);
 
-      if (data !== null) {
-        setUser({user: data[0]});
-        await AsyncStorage.setItem("user", JSON.stringify(data[0]));
-        await AsyncStorage.setItem("userName", name);
+      try {
+        const {data, error} = await upsertUser(name);
+        if (error) {
+          console.error(error);
+          handleLogout();
+          return;
+        }
+
+        if (data !== null) {
+          setUser({user: data[0]});
+          await AsyncStorage.setItem("user", JSON.stringify({user: data[0]}));
+          await AsyncStorage.setItem("userName", name);
+        }
+      } catch (error) {
+        if (error instanceof Error) console.error(error.message);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
     }
     saveUserToDb();
+    return () => {
+      ignore = true;
+    };
   }, [name]);
 
   const handleName = (name: string) => {
