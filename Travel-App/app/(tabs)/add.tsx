@@ -11,14 +11,15 @@ import {
 import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {Spacing, BorderRadius} from "@/constants/Spacing";
-import useImagepicker from "@/hooks/useImagepicker";
 import Entypo from "@expo/vector-icons/Entypo";
 import useSaveDiscovery from "@/hooks/useSaveDiscovery";
 import {useContext, useEffect, useState} from "react";
 import {AsyncStorageContext} from "@/contextApi/AsyncStorageContex";
 import {router, useFocusEffect} from "expo-router";
-import useLocation from "@/hooks/useLocation";
 import React from "react";
+import useLocation from "@/hooks/useLocation";
+import useImagepicker from "@/hooks/useImagepicker";
+import {isValidImagePicker, isValidLocation} from "@/helpers/validation";
 
 //TODO: Button inactive when form is not done
 
@@ -26,32 +27,47 @@ const Add = () => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
-  const {imageUri, imageBase64, mimeType, handleImage, handleReset} =
-    useImagepicker();
-  const {loading, error, success, handleSave} = useSaveDiscovery();
+  const {
+    result: imagePickerResult,
+    handleImage,
+    handleReset,
+  } = useImagepicker();
+  const {
+    loading: loadingSaveDiscovery,
+    error,
+    success,
+    handleSave,
+  } = useSaveDiscovery();
   const {user} = useContext(AsyncStorageContext);
   const {
-    location,
+    result: locationResult,
     handleLocation,
     loading: loadingLocation,
-    locationName,
   } = useLocation();
 
-  const imageSource = imageUri
-    ? {uri: imageUri}
+  const imageSource = imagePickerResult?.imageUri
+    ? {uri: imagePickerResult.imageUri}
     : require("../../assets/images/600x400.png");
 
+  const isValid =
+    title !== "" &&
+    isValidImagePicker(imagePickerResult) &&
+    isValidLocation(locationResult);
+
   const save = () => {
+    if (!user.user) return;
+    if (!isValid) return;
+
     handleSave({
-      username: user.user!.username,
+      username: user.user.username,
       title: title,
       description: description,
-      location_name: locationName!,
-      latitude: location?.coords.latitude!,
-      longitude: location?.coords.longitude!,
-      imageUri: imageUri ?? "",
-      imageBase64: imageBase64 ?? "",
-      mimeType: mimeType ?? "",
+      location_name: locationResult.locationName,
+      latitude: locationResult.location.coords.latitude,
+      longitude: locationResult.location.coords.longitude,
+      imageUri: imagePickerResult.imageUri,
+      imageBase64: imagePickerResult.imageBase64,
+      mimeType: imagePickerResult.mimeType,
     });
   };
 
@@ -116,7 +132,7 @@ const Add = () => {
                 color={Colors.primary}
                 style={styles.loader}
               />
-            ) : location === null ? (
+            ) : locationResult === null ? (
               <Text style={styles.locationText}>Load location</Text>
             ) : (
               <Text style={styles.locationText}>Locatie Saved !</Text>
@@ -124,7 +140,7 @@ const Add = () => {
           </Pressable>
         </View>
 
-        {loading ? (
+        {loadingSaveDiscovery ? (
           <ActivityIndicator
             size="large"
             color={Colors.primary}
