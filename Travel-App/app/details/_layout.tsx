@@ -51,10 +51,26 @@ const DetailsLayout = () => {
                 style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
               >
                 <FontAwesome
-                  style={{paddingInline: 10}}
+                  style={{marginInline: 10}}
                   name="chevron-left"
                   size={16}
                   color={Colors.primary}
+                />
+              </Pressable>
+            ),
+            headerRight: () => (
+              <Pressable
+                onPress={() => router.back()}
+                style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+              >
+                <FontAwesome
+                  style={{
+                    marginInline: Spacing.sm,
+                    fontSize: FontSize.xl,
+                  }}
+                  name="trash"
+                  size={10}
+                  color={Colors.error}
                 />
               </Pressable>
             ),

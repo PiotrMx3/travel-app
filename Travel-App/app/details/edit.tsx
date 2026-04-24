@@ -3,10 +3,12 @@ import {Colors} from "@/constants/Colors";
 import {BorderRadius, Spacing} from "@/constants/Spacing";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {DbContext} from "@/contextApi/DbContext";
+import updateDiscovery from "@/database/updateCard";
 import {router, useLocalSearchParams} from "expo-router";
 import {useContext, useEffect, useState} from "react";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -18,7 +20,7 @@ import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 const Edit = () => {
   const {id} = useLocalSearchParams<{id: string}>();
-  const {data, loading} = useContext(DbContext);
+  const {data, loading, reloadData} = useContext(DbContext);
   const insets = useSafeAreaInsets();
 
   const item: DiscoveryCardProp | undefined = data.find((i) => i.id === id);
@@ -26,6 +28,7 @@ const Edit = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
+  // needed to re render screen after successed save.:)
   useEffect(() => {
     if (item) {
       setTitle(item.title);
@@ -45,8 +48,19 @@ const Edit = () => {
 
   if (!item) return null;
 
-  const handleSave = () => {
-    // TODO: implement updateDiscovery in database layer
+  const handleSave = async () => {
+    const error = await updateDiscovery({
+      id: item.id,
+      title: title,
+      description: description,
+    });
+
+    if (error.error !== null) {
+      Alert.alert("Something went wrong try again");
+      return;
+    }
+
+    reloadData();
     router.back();
   };
 
