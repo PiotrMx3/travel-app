@@ -16,6 +16,7 @@ export interface IUseLocation {
   } | null;
   loading: boolean;
   handleLocation: () => void;
+  handleReset: () => void;
 }
 
 const useLocation = (): IUseLocation => {
@@ -24,6 +25,11 @@ const useLocation = (): IUseLocation => {
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [locationName, setLocationName] = useState<string | null>(null);
+
+  const handleReset = () => {
+    setLocation(null);
+    setLocationName(null);
+  };
 
   async function getCurrentLocation() {
     setLoading(true);
@@ -61,6 +67,7 @@ const useLocation = (): IUseLocation => {
       : null,
     handleLocation: getCurrentLocation,
     loading: loading,
+    handleReset: handleReset,
   };
 };
 

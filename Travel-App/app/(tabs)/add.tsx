@@ -30,7 +30,7 @@ const Add = () => {
   const {
     result: imagePickerResult,
     handleImage,
-    handleReset,
+    handleReset: handleResetImage,
   } = useImagepicker();
   const {
     loading: loadingSaveDiscovery,
@@ -43,6 +43,7 @@ const Add = () => {
     result: locationResult,
     handleLocation,
     loading: loadingLocation,
+    handleReset: handleResetLocation,
   } = useLocation();
 
   const imageSource = imagePickerResult?.imageUri
@@ -71,11 +72,17 @@ const Add = () => {
     });
   };
 
+  const resetAllStates = () => {
+    setTitle("");
+    setDescription("");
+    handleResetImage();
+    handleResetLocation();
+  };
+
   useFocusEffect(
     React.useCallback(() => {
-      console.log("focus");
       return () => {
-        console.log("focus gone");
+        resetAllStates();
       };
     }, []),
   );
@@ -84,15 +91,11 @@ const Add = () => {
     // Both False at start
     if (success) {
       Alert.alert("Discovery has been sucessed add!");
-      setTitle("");
-      setDescription("");
-      handleReset();
+      resetAllStates();
       router.push("/Home");
     } else if (error) {
       Alert.alert("Something went wrong try again!");
-      setTitle("");
-      setDescription("");
-      handleReset();
+      resetAllStates();
       router.push("/Home");
     }
   }, [success, error]);
@@ -148,9 +151,11 @@ const Add = () => {
           />
         ) : (
           <Pressable
+            disabled={!isValid}
             style={({pressed}) => [
               styles.button,
               pressed && styles.buttonPressed,
+              !isValid && styles.buttonDisabled,
             ]}
             onPress={save}
           >
@@ -161,6 +166,8 @@ const Add = () => {
     </View>
   );
 };
+
+export default Add;
 
 const styles = StyleSheet.create({
   container: {
@@ -220,6 +227,9 @@ const styles = StyleSheet.create({
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
   },
+  buttonDisabled: {
+    backgroundColor: Colors.error,
+  },
   locationRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -234,5 +244,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-export default Add;
