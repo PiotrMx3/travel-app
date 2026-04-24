@@ -36,6 +36,7 @@ const DiscoveryCard = ({data}: {data: DiscoveryCardProp}) => {
 
         <View style={styles.locationBox}>
           <Text style={styles.city}>{data.location_name}</Text>
+
           {data.latitude !== null && data.longitude !== null ? (
             <Text style={styles.coordinates}>
               {data.latitude.toFixed(4)} N, {data.longitude.toFixed(4)} E

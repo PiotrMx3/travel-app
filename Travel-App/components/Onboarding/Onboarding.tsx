@@ -39,6 +39,8 @@ const Onboarding = () => {
           placeholder="Enter your name"
           placeholderTextColor={Colors.textSecondary}
           keyboardType="default"
+          submitBehavior="blurAndSubmit"
+          returnKeyType="done"
           value={name}
           style={styles.textInput}
         />

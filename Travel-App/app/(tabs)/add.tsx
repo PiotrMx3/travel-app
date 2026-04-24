@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
@@ -102,71 +103,77 @@ const Add = () => {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={handleImage}>
-        <Image source={imageSource} style={styles.image} />
-      </Pressable>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <Pressable onPress={handleImage}>
+          <Image source={imageSource} style={styles.image} />
+        </Pressable>
 
-      <View style={styles.form}>
-        <Text style={styles.title}>Add Discovery</Text>
-        <Text style={styles.subtitle}>Share your next destination</Text>
+        <View style={styles.form}>
+          <Text style={styles.title}>Add Discovery</Text>
+          <Text style={styles.subtitle}>Share your next destination</Text>
 
-        <TextInput
-          onChangeText={(text) => setTitle(text)}
-          value={title}
-          style={styles.input}
-          placeholder="Discovery Title"
-          placeholderTextColor={Colors.textSecondary}
-          submitBehavior="blurAndSubmit"
-          returnKeyType="done"
-        />
-        <TextInput
-          onChangeText={(text) => setDescription(text)}
-          value={description}
-          style={[styles.input, styles.inputMultiline]}
-          placeholder="Discovery Description"
-          placeholderTextColor={Colors.textSecondary}
-          multiline
-          submitBehavior="blurAndSubmit"
-          returnKeyType="done"
-        />
-
-        <View style={styles.locationRow}>
-          <Entypo name="location-pin" size={40} color={Colors.primary} />
-          <Pressable onPress={handleLocation}>
-            {loadingLocation ? (
-              <ActivityIndicator
-                size="large"
-                color={Colors.primary}
-                style={styles.loader}
-              />
-            ) : locationResult === null ? (
-              <Text style={styles.locationText}>Load location</Text>
-            ) : (
-              <Text style={styles.locationText}>Location Saved!</Text>
-            )}
-          </Pressable>
-        </View>
-
-        {loadingSaveDiscovery ? (
-          <ActivityIndicator
-            size="large"
-            color={Colors.primary}
-            style={styles.loader}
+          <TextInput
+            onChangeText={(text) => setTitle(text)}
+            value={title}
+            style={styles.input}
+            placeholder="Discovery Title"
+            placeholderTextColor={Colors.textSecondary}
+            submitBehavior="blurAndSubmit"
+            returnKeyType="done"
           />
-        ) : (
-          <Pressable
-            disabled={!isValid}
-            style={({pressed}) => [
-              styles.button,
-              pressed && styles.buttonPressed,
-              !isValid && styles.buttonDisabled,
-            ]}
-            onPress={save}
-          >
-            <Text style={styles.buttonText}>Save Discovery</Text>
-          </Pressable>
-        )}
-      </View>
+          <TextInput
+            onChangeText={(text) => setDescription(text)}
+            value={description}
+            style={[styles.input, styles.inputMultiline]}
+            placeholder="Discovery Description"
+            placeholderTextColor={Colors.textSecondary}
+            multiline
+            submitBehavior="blurAndSubmit"
+            returnKeyType="done"
+          />
+
+          <View style={styles.locationRow}>
+            <Entypo name="location-pin" size={40} color={Colors.primary} />
+            <Pressable onPress={handleLocation}>
+              {loadingLocation ? (
+                <ActivityIndicator
+                  size="large"
+                  color={Colors.primary}
+                  style={styles.loader}
+                />
+              ) : locationResult === null ? (
+                <Text style={styles.locationText}>Load location</Text>
+              ) : (
+                <Text style={styles.locationText}>Location Saved!</Text>
+              )}
+            </Pressable>
+          </View>
+
+          {loadingSaveDiscovery ? (
+            <ActivityIndicator
+              size="large"
+              color={Colors.primary}
+              style={styles.loader}
+            />
+          ) : (
+            <Pressable
+              disabled={!isValid}
+              style={({pressed}) => [
+                styles.button,
+                pressed && styles.buttonPressed,
+                !isValid && styles.buttonDisabled,
+              ]}
+              onPress={save}
+            >
+              <Text style={styles.buttonText}>Save Discovery</Text>
+            </Pressable>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -247,5 +254,11 @@ const styles = StyleSheet.create({
   },
   loader: {
     flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: Spacing.xl,
   },
 });
