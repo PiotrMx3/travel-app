@@ -1,14 +1,15 @@
 import {AsyncStorageContext} from "@/contextApi/AsyncStorageContex";
 import {Colors} from "@/constants/Colors";
-import {Redirect, Slot, Stack} from "expo-router";
+import {Spacing} from "@/constants/Spacing";
+import {FontSize, FontWeight} from "@/constants/Typography";
+import {FontAwesome} from "@expo/vector-icons";
+import {Redirect, Stack, router} from "expo-router";
 import {useContext} from "react";
-import {ActivityIndicator} from "react-native";
-import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {ActivityIndicator, Pressable, Text} from "react-native";
 import {DbContextProvider} from "@/contextApi/DbContext";
 
 const DetailsLayout = () => {
   const {name, loading} = useContext(AsyncStorageContext);
-  const insets = useSafeAreaInsets();
 
   if (loading) {
     return (
@@ -25,24 +26,67 @@ const DetailsLayout = () => {
   }
 
   return (
-    <>
-      <DbContextProvider>
+    <DbContextProvider>
+      <Stack
+        screenOptions={{
+          headerStyle: {backgroundColor: Colors.background},
+          headerShadowVisible: false,
+          headerTintColor: Colors.primary,
+          headerTitleStyle: {
+            fontSize: FontSize.md,
+            fontWeight: FontWeight.semibold,
+            color: Colors.text,
+          },
+          contentStyle: {backgroundColor: Colors.background},
+        }}
+      >
         <Stack.Screen
+          name="[id]"
           options={{
-            headerShown: true,
             title: "Details",
             animation: "fade",
-            contentStyle: {
-              paddingTop: 0,
-              paddingBottom: insets.bottom,
-              backgroundColor: Colors.background,
-            },
-            headerBackButtonDisplayMode: "minimal",
+            headerLeft: () => (
+              <Pressable
+                onPress={() => router.back()}
+                style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+              >
+                <FontAwesome
+                  style={{paddingInline: 10}}
+                  name="chevron-left"
+                  size={16}
+                  color={Colors.primary}
+                />
+              </Pressable>
+            ),
           }}
         />
-        <Slot />
-      </DbContextProvider>
-    </>
+        <Stack.Screen
+          name="edit"
+          options={{
+            presentation: "modal",
+            title: "Edit",
+            headerStyle: {backgroundColor: Colors.surface},
+            headerShadowVisible: true,
+            headerLeft: () => (
+              <Pressable
+                onPress={() => router.back()}
+                style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+              >
+                <Text
+                  style={{
+                    fontSize: FontSize.md,
+                    fontWeight: FontWeight.medium,
+                    color: Colors.error,
+                  }}
+                >
+                  Cancel
+                </Text>
+              </Pressable>
+            ),
+          }}
+        />
+      </Stack>
+    </DbContextProvider>
   );
 };
 

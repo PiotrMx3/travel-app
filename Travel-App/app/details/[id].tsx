@@ -3,8 +3,9 @@ import {Colors} from "@/constants/Colors";
 import {BorderRadius, Spacing} from "@/constants/Spacing";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {DbContext} from "@/contextApi/DbContext";
-import {useLocalSearchParams} from "expo-router";
+import {router, useLocalSearchParams} from "expo-router";
 import {useContext} from "react";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {
   ActivityIndicator,
   Image,
@@ -18,6 +19,7 @@ import {
 const Details = () => {
   const {id} = useLocalSearchParams<{id: string}>();
   const {data, loading} = useContext(DbContext);
+  const insets = useSafeAreaInsets();
 
   const item: DiscoveryCardProp | undefined = data.find((i) => i.id === id);
 
@@ -41,7 +43,6 @@ const Details = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Image */}
         <Image
           source={{uri: item.image_url}}
           style={styles.image}
@@ -49,15 +50,12 @@ const Details = () => {
         />
 
         <View style={styles.body}>
-          {/* Title */}
           <Text style={styles.title}>{item.title}</Text>
 
-          {/* Description */}
           {item.description ? (
             <Text style={styles.description}>{item.description}</Text>
           ) : null}
 
-          {/* Coordinates */}
           {item.latitude !== null && item.longitude !== null ? (
             <View style={styles.coordsBox}>
               <Text style={styles.coordsLabel}>Coordinates</Text>
@@ -67,20 +65,21 @@ const Details = () => {
             </View>
           ) : null}
 
-          {/* Map placeholder */}
           <View style={styles.mapPlaceholder}>
             <Text style={styles.mapPlaceholderText}>Map coming soon</Text>
           </View>
         </View>
       </ScrollView>
 
-      {/* Edit button — fixed at bottom */}
-      <View style={styles.footer}>
+      <View
+        style={[styles.footer, {paddingBottom: insets.bottom || Spacing.md}]}
+      >
         <Pressable
           style={({pressed}) => [
             styles.editButton,
             pressed && styles.editButtonPressed,
           ]}
+          onPress={() => router.push(`/details/edit?id=${item.id}`)}
         >
           <Text style={styles.editButtonText}>Edit</Text>
         </Pressable>
@@ -104,10 +103,11 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xl,
   },
   image: {
-    width: "97%",
+    alignSelf: "stretch",
     height: 280,
-    alignSelf: "center",
-    borderRadius: BorderRadius.md,
+    marginHorizontal: Spacing.md,
+    marginTop: Spacing.md,
+    borderRadius: BorderRadius.lg,
   },
   body: {
     padding: Spacing.md,
@@ -158,7 +158,8 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   footer: {
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
     backgroundColor: Colors.background,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
