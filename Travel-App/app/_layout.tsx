@@ -1,5 +1,6 @@
 import {Colors} from "@/constants/Colors";
 import {AsyncStorageProvider} from "@/contextApi/AsyncStorageContex";
+import {DbContextProvider} from "@/contextApi/DbContext";
 import {Stack} from "expo-router";
 import {
   SafeAreaProvider,
@@ -25,7 +26,9 @@ const RootLayout = () => {
   return (
     <SafeAreaProvider>
       <AsyncStorageProvider>
-        <RootLayoutInner />
+        <DbContextProvider>
+          <RootLayoutInner />
+        </DbContextProvider>
       </AsyncStorageProvider>
     </SafeAreaProvider>
   );

@@ -21,14 +21,26 @@ import {FontAwesome} from "@expo/vector-icons";
 
 const Details = () => {
   const {id} = useLocalSearchParams<{id: string}>();
-  const {data, loading, reloadData} = useContext(DbContext);
+  const {data, loading} = useContext(DbContext);
   const insets = useSafeAreaInsets();
 
   const item: DiscoveryCardProp | undefined = data.find((i) => i.id === id);
 
-  if (item === undefined) return null;
-  // TODO: Error handling in UI — not found page
-  // RACE CONDITIONS FIX ?
+  if (loading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color={Colors.primary}
+        style={styles.loader}
+      />
+    );
+  }
+
+  if (item === undefined) {
+    router.back();
+    return null;
+  }
+
   const handleDelte = async () => {
     const status = await deleteCard(item.id, item.image_url);
 
@@ -40,15 +52,6 @@ const Details = () => {
     router.back();
   };
 
-  if (loading) {
-    return (
-      <ActivityIndicator
-        size="large"
-        color={Colors.primary}
-        style={styles.loader}
-      />
-    );
-  }
   return (
     <View style={styles.screen}>
       <Stack.Screen

@@ -1,6 +1,5 @@
 import {Redirect, Tabs} from "expo-router";
 import {FontAwesome} from "@expo/vector-icons";
-import {DbContextProvider} from "@/contextApi/DbContext";
 import {Colors} from "@/constants/Colors";
 import {FontSize} from "@/constants/Typography";
 import {useContext} from "react";
@@ -32,8 +31,7 @@ const TabsLayout = () => {
   }
 
   return (
-    <DbContextProvider>
-      <Tabs
+    <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors.primary,
           tabBarInactiveTintColor: Colors.textSecondary,
@@ -74,7 +72,6 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
-    </DbContextProvider>
   );
 };
 

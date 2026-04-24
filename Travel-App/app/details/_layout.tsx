@@ -6,7 +6,6 @@ import {FontAwesome} from "@expo/vector-icons";
 import {Redirect, Stack, router} from "expo-router";
 import {useContext} from "react";
 import {ActivityIndicator, Pressable, Text} from "react-native";
-import {DbContextProvider} from "@/contextApi/DbContext";
 
 const DetailsLayout = () => {
   const {name, loading} = useContext(AsyncStorageContext);
@@ -26,83 +25,65 @@ const DetailsLayout = () => {
   }
 
   return (
-    <DbContextProvider>
-      <Stack
-        screenOptions={{
-          headerStyle: {backgroundColor: Colors.background},
-          headerShadowVisible: false,
-          headerTintColor: Colors.primary,
-          headerTitleStyle: {
-            fontSize: FontSize.md,
-            fontWeight: FontWeight.semibold,
-            color: Colors.text,
-          },
-          contentStyle: {backgroundColor: Colors.background},
+    <Stack
+      screenOptions={{
+        headerStyle: {backgroundColor: Colors.background},
+        headerShadowVisible: false,
+        headerTintColor: Colors.primary,
+        headerTitleStyle: {
+          fontSize: FontSize.md,
+          fontWeight: FontWeight.semibold,
+          color: Colors.text,
+        },
+        contentStyle: {backgroundColor: Colors.background},
+      }}
+    >
+      <Stack.Screen
+        name="[id]"
+        options={{
+          title: "Details",
+          animation: "fade",
+          headerLeft: () => (
+            <Pressable
+              onPress={() => router.back()}
+              style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+            >
+              <FontAwesome
+                style={{marginInline: 10}}
+                name="chevron-left"
+                size={16}
+                color={Colors.primary}
+              />
+            </Pressable>
+          ),
         }}
-      >
-        <Stack.Screen
-          name="[id]"
-          options={{
-            title: "Details",
-            animation: "fade",
-            headerLeft: () => (
-              <Pressable
-                onPress={() => router.back()}
-                style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+      />
+      <Stack.Screen
+        name="edit"
+        options={{
+          presentation: "modal",
+          title: "Edit",
+          headerStyle: {backgroundColor: Colors.surface},
+          headerShadowVisible: true,
+          headerLeft: () => (
+            <Pressable
+              onPress={() => router.back()}
+              style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+            >
+              <Text
+                style={{
+                  fontSize: FontSize.md,
+                  fontWeight: FontWeight.medium,
+                  color: Colors.error,
+                }}
               >
-                <FontAwesome
-                  style={{marginInline: 10}}
-                  name="chevron-left"
-                  size={16}
-                  color={Colors.primary}
-                />
-              </Pressable>
-            ),
-            headerRight: () => (
-              <Pressable
-                onPress={() => router.back()}
-                style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
-              >
-                <FontAwesome
-                  style={{
-                    marginInline: Spacing.sm,
-                    fontSize: FontSize.xl,
-                  }}
-                  name="trash"
-                  size={10}
-                  color={Colors.error}
-                />
-              </Pressable>
-            ),
-          }}
-        />
-        <Stack.Screen
-          name="edit"
-          options={{
-            presentation: "modal",
-            title: "Edit",
-            headerStyle: {backgroundColor: Colors.surface},
-            headerShadowVisible: true,
-            headerLeft: () => (
-              <Pressable
-                onPress={() => router.back()}
-                style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
-              >
-                <Text
-                  style={{
-                    fontSize: FontSize.md,
-                    fontWeight: FontWeight.medium,
-                    color: Colors.error,
-                  }}
-                >
-                  Cancel
-                </Text>
-              </Pressable>
-            ),
-          }}
-        />
-      </Stack>
-    </DbContextProvider>
+                Cancel
+              </Text>
+            </Pressable>
+          ),
+        }}
+      />
+    </Stack>
   );
 };
 

@@ -13,11 +13,19 @@ import {
   StyleSheet,
   Pressable,
 } from "react-native";
+import {useFocusEffect} from "expo-router";
+import React from "react";
 
 const Home = () => {
   //TODO: User.Id From context is needed to save favs.
   const {name, user, handleLogout} = useContext(AsyncStorageContext);
   const {data, loading, reloadData, initLoading} = useContext(DbContext);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      reloadData();
+    }, []),
+  );
 
   return (
     <View style={styles.container}>
