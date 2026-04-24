@@ -3,11 +3,12 @@ import {Colors} from "@/constants/Colors";
 import {BorderRadius, Spacing} from "@/constants/Spacing";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {DbContext} from "@/contextApi/DbContext";
-import {router, useLocalSearchParams} from "expo-router";
+import {router, Stack, useLocalSearchParams} from "expo-router";
 import {useContext} from "react";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -15,13 +16,29 @@ import {
   Text,
   View,
 } from "react-native";
+import deleteCard from "@/database/deleteCard";
+import {FontAwesome} from "@expo/vector-icons";
 
 const Details = () => {
   const {id} = useLocalSearchParams<{id: string}>();
-  const {data, loading} = useContext(DbContext);
+  const {data, loading, reloadData} = useContext(DbContext);
   const insets = useSafeAreaInsets();
 
   const item: DiscoveryCardProp | undefined = data.find((i) => i.id === id);
+
+  if (item === undefined) return null;
+  // TODO: Error handling in UI — not found page
+  // RACE CONDITIONS FIX ?
+  const handleDelte = async () => {
+    const status = await deleteCard(item.id, item.image_url);
+
+    if (!status.success) {
+      Alert.alert("Something went wrong try again");
+      return;
+    }
+    Alert.alert("Discovery has been deleted !");
+    router.back();
+  };
 
   if (loading) {
     return (
@@ -32,12 +49,29 @@ const Details = () => {
       />
     );
   }
-
-  if (item === undefined) return null;
-  // TODO: Error handling in UI — not found page
-
   return (
     <View style={styles.screen}>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <Pressable
+              onPress={() => handleDelte()}
+              style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+            >
+              <FontAwesome
+                style={{
+                  marginInline: Spacing.sm,
+                  fontSize: FontSize.xl,
+                }}
+                name="trash"
+                size={10}
+                color={Colors.error}
+              />
+            </Pressable>
+          ),
+        }}
+      />
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
