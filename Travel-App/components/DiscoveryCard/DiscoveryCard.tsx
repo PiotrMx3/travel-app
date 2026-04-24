@@ -1,12 +1,10 @@
 import {Text, View, StyleSheet, Image, Pressable} from "react-native";
-import {IDiscoveryItem as IDiscoveryCard} from "@/contextApi/DbContext";
 import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {BorderRadius, Spacing} from "@/constants/Spacing";
 import {router} from "expo-router";
-import CardWithFavType from "@/database/cardWithFavType";
 
-interface DiscoveryCardProp {
+export interface DiscoveryCardProp {
   created_at: string | null;
   description: string | null;
   id: string;
@@ -38,9 +36,11 @@ const DiscoveryCard = ({data}: {data: DiscoveryCardProp}) => {
 
         <View style={styles.locationBox}>
           <Text style={styles.city}>{data.location_name}</Text>
-          <Text style={styles.coordinates}>
-            {data.latitude?.toFixed(4)}, {data.longitude?.toFixed(4)}
-          </Text>
+          {data.latitude !== null && data.longitude !== null ? (
+            <Text style={styles.coordinates}>
+              {data.latitude.toFixed(4)} N, {data.longitude.toFixed(4)} E
+            </Text>
+          ) : null}
         </View>
       </View>
     </View>

@@ -116,6 +116,8 @@ const Add = () => {
           style={styles.input}
           placeholder="Discovery Title"
           placeholderTextColor={Colors.textSecondary}
+          submitBehavior="blurAndSubmit"
+          returnKeyType="done"
         />
         <TextInput
           onChangeText={(text) => setDescription(text)}
@@ -124,6 +126,8 @@ const Add = () => {
           placeholder="Discovery Description"
           placeholderTextColor={Colors.textSecondary}
           multiline
+          submitBehavior="blurAndSubmit"
+          returnKeyType="done"
         />
 
         <View style={styles.locationRow}>
@@ -138,7 +142,7 @@ const Add = () => {
             ) : locationResult === null ? (
               <Text style={styles.locationText}>Load location</Text>
             ) : (
-              <Text style={styles.locationText}>Locatie Saved !</Text>
+              <Text style={styles.locationText}>Location Saved!</Text>
             )}
           </Pressable>
         </View>
@@ -178,13 +182,14 @@ const styles = StyleSheet.create({
     width: "80%",
     height: 220,
     alignSelf: "center",
-    marginTop: 20,
-    borderRadius: 20,
+    marginTop: Spacing.lg,
+    borderRadius: BorderRadius.lg,
   },
   form: {
     flex: 1,
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.lg,
+    rowGap: Spacing.sm,
   },
   title: {
     fontSize: FontSize.xl,
@@ -228,7 +233,7 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.semibold,
   },
   buttonDisabled: {
-    backgroundColor: Colors.error,
+    opacity: 0.45,
   },
   locationRow: {
     flexDirection: "row",
