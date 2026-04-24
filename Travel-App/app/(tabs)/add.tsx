@@ -93,11 +93,11 @@ const Add = () => {
     if (success) {
       Alert.alert("Discovery has been sucessed add!");
       resetAllStates();
-      router.push("/Home");
+      router.navigate("/Home");
     } else if (error) {
       Alert.alert("Something went wrong try again!");
       resetAllStates();
-      router.push("/Home");
+      router.navigate("/Home");
     }
   }, [success, error]);
 
