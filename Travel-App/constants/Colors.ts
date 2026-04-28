@@ -15,6 +15,8 @@ export const Colors = {
 
   white: "#FFFFFF",
   black: "#000000",
+
+  favourite: "#F9A825",
 } as const;
 
 export type ColorKey = keyof typeof Colors;

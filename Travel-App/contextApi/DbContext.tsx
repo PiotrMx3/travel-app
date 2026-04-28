@@ -2,24 +2,14 @@ import React, {useCallback, useContext, useEffect, useState} from "react";
 import {AsyncStorageContext} from "./AsyncStorageContex";
 import {supabase} from "@/database/supabase";
 import CardWithFavType from "@/database/cardWithFavType";
-
-export interface IDiscoveryItem {
-  id: number;
-  title: string;
-  image: string;
-  location: {
-    city: string;
-    address: string;
-    lat: number;
-    lng: number;
-  };
-}
+import toggleFavouriteDb from "@/database/toggleFavourite";
 
 export interface IDbContext {
   data: CardWithFavType;
   loading: boolean;
   reloadData: () => void;
   initLoading: boolean;
+  toggleFavourite: (cardId: string, isFavourite: boolean) => Promise<void>;
 }
 
 export const DbContext = React.createContext<IDbContext>({
@@ -27,6 +17,7 @@ export const DbContext = React.createContext<IDbContext>({
   loading: false,
   reloadData: () => {},
   initLoading: false,
+  toggleFavourite: async () => {},
 });
 
 export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
@@ -36,10 +27,23 @@ export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
   const [trigger, setTrigger] = useState<boolean>(false);
   const {user} = useContext(AsyncStorageContext);
 
-  const handleReload = useCallback(() => {
+  const handleReload = () => {
     setTrigger((prev) => !prev);
-  }, []);
-
+  };
+  const handleToggleFavourite = async (
+    cardId: string,
+    isFavourite: boolean,
+  ) => {
+    if (user.user === null) return;
+    const result = await toggleFavouriteDb(
+      cardId,
+      isFavourite,
+      user.user.username,
+    );
+    if (result.success) {
+      setTrigger((prev) => !prev);
+    }
+  };
   useEffect(() => {
     let ignore = false;
     const fetchData = async () => {
@@ -80,6 +84,7 @@ export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
         loading: loading,
         reloadData: handleReload,
         initLoading: initLoading,
+        toggleFavourite: handleToggleFavourite,
       }}
     >
       {children}

@@ -21,7 +21,7 @@ import {FontAwesome} from "@expo/vector-icons";
 
 const Details = () => {
   const {id} = useLocalSearchParams<{id: string}>();
-  const {data, loading} = useContext(DbContext);
+  const {data, loading, toggleFavourite} = useContext(DbContext);
   const insets = useSafeAreaInsets();
 
   const item: DiscoveryCardProp | undefined = data.find((i) => i.id === id);
@@ -85,8 +85,27 @@ const Details = () => {
           style={styles.image}
           resizeMode="cover"
         />
-
         <View style={styles.body}>
+          <View style={styles.titleRow}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Pressable
+              onPress={() =>
+                toggleFavourite(item.id, item.favourites.length > 0)
+              }
+              style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+            >
+              <FontAwesome
+                name={item.favourites.length > 0 ? "star" : "star-o"}
+                size={26}
+                color={
+                  item.favourites.length > 0
+                    ? Colors.favourite
+                    : Colors.textSecondary
+                }
+              />
+            </Pressable>
+          </View>
+
           <Text style={styles.title}>{item.title}</Text>
 
           {item.description ? (
@@ -150,7 +169,15 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     gap: Spacing.md,
   },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.sm,
+  },
+
   title: {
+    flex: 1,
     fontSize: FontSize.xl,
     fontWeight: FontWeight.bold,
     color: Colors.text,
