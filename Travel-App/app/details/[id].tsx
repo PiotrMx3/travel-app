@@ -10,6 +10,8 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Linking,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -106,8 +108,6 @@ const Details = () => {
             </Pressable>
           </View>
 
-          <Text style={styles.title}>{item.title}</Text>
-
           {item.description ? (
             <Text style={styles.description}>{item.description}</Text>
           ) : null}
@@ -121,9 +121,24 @@ const Details = () => {
             </View>
           ) : null}
 
-          <View style={styles.mapPlaceholder}>
-            <Text style={styles.mapPlaceholderText}>Map coming soon</Text>
-          </View>
+          {item.latitude !== null && item.longitude !== null ? (
+            <Pressable
+              style={({pressed}) => [
+                styles.mapButton,
+                pressed && styles.mapButtonPressed,
+              ]}
+              onPress={() => {
+                const url =
+                  Platform.OS === "ios"
+                    ? `maps://?q=${item.latitude},${item.longitude}`
+                    : `https://maps.google.com/?q=${item.latitude},${item.longitude}`;
+                Linking.openURL(url);
+              }}
+            >
+              <FontAwesome name="map-marker" size={18} color={Colors.white} />
+              <Text style={styles.mapButtonText}>Open in Maps</Text>
+            </Pressable>
+          ) : null}
         </View>
       </ScrollView>
 
@@ -208,18 +223,22 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.medium,
     color: Colors.text,
   },
-  mapPlaceholder: {
-    height: 200,
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: Colors.border,
+  mapButton: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    gap: Spacing.sm,
+    backgroundColor: Colors.primary,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.md,
   },
-  mapPlaceholderText: {
+  mapButtonPressed: {
+    backgroundColor: Colors.primaryLight,
+  },
+  mapButtonText: {
     fontSize: FontSize.md,
-    color: Colors.textSecondary,
+    fontWeight: FontWeight.semibold,
+    color: Colors.white,
   },
   footer: {
     paddingHorizontal: Spacing.md,

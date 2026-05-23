@@ -42,6 +42,13 @@ const Home = () => {
           color={Colors.primary}
           style={styles.loader}
         />
+      ) : data.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No discoveries yet</Text>
+          <Text style={styles.emptySubtext}>
+            Tap the + tab to add your first destination
+          </Text>
+        </View>
       ) : (
         <FlatList
           data={data}
@@ -80,6 +87,23 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: Spacing.lg,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing.xl,
+  },
+  emptyText: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.semibold,
+    color: Colors.text,
+    marginBottom: Spacing.sm,
+  },
+  emptySubtext: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+    textAlign: "center",
   },
 });
 

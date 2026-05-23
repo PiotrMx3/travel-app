@@ -3,6 +3,9 @@ import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
 import {BorderRadius, Spacing} from "@/constants/Spacing";
 import {router} from "expo-router";
+import {useContext} from "react";
+import {DbContext} from "@/contextApi/DbContext";
+import {FontAwesome} from "@expo/vector-icons";
 
 export interface DiscoveryCardProp {
   created_at: string | null;
@@ -21,6 +24,9 @@ export interface DiscoveryCardProp {
 }
 
 const DiscoveryCard = ({data}: {data: DiscoveryCardProp}) => {
+  const {toggleFavourite} = useContext(DbContext);
+  const isFavourite = data.favourites.length > 0;
+
   return (
     <View style={styles.card}>
       <Pressable onPress={() => router.push(`/details/${data.id}`)}>
@@ -32,7 +38,19 @@ const DiscoveryCard = ({data}: {data: DiscoveryCardProp}) => {
       </Pressable>
 
       <View style={styles.content}>
-        <Text style={styles.title}>{data.title}</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{data.title}</Text>
+          <Pressable
+            onPress={() => toggleFavourite(data.id, isFavourite)}
+            style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+          >
+            <FontAwesome
+              name={isFavourite ? "star" : "star-o"}
+              size={22}
+              color={isFavourite ? Colors.favourite : Colors.textSecondary}
+            />
+          </Pressable>
+        </View>
 
         <View style={styles.locationBox}>
           <Text style={styles.city}>{data.location_name}</Text>
@@ -68,11 +86,18 @@ const styles = StyleSheet.create({
   content: {
     padding: Spacing.md,
   },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
   title: {
+    flex: 1,
     fontSize: FontSize.lg,
     fontWeight: FontWeight.bold,
     color: Colors.text,
-    marginBottom: Spacing.sm,
   },
   locationBox: {
     borderTopWidth: 1,

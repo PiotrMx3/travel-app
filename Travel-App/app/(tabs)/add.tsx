@@ -8,6 +8,8 @@ import {
   Alert,
   ActivityIndicator,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {Colors} from "@/constants/Colors";
 import {FontSize, FontWeight} from "@/constants/Typography";
@@ -102,11 +104,15 @@ const Add = () => {
   }, [success, error]);
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <Pressable onPress={handleImage}>
           <Image source={imageSource} style={styles.image} />
@@ -174,7 +180,7 @@ const Add = () => {
           )}
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

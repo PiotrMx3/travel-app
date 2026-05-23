@@ -53,7 +53,8 @@ export const DbContextProvider = ({children}: {children: React.ReactNode}) => {
         const {data, error} = await supabase
           .from("cards")
           .select(`*, favourites (id, card_id)`)
-          .eq(`favourites.username`, user.user.username);
+          .eq(`favourites.username`, user.user.username)
+          .order("created_at", {ascending: false});
 
         if (error) throw new Error(error.message);
 
